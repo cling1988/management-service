@@ -1,15 +1,15 @@
 package com.app.controller;
 
+import com.app.common.CommonKey;
 import com.app.model.ProductModel;
-import com.app.model.ProductModels;
+import com.app.model.ProductListResponse;
 import com.app.service.ManageProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(path="/api/service/products")
+@RequestMapping(path= CommonKey.URL_PRODUCT)
 public class ProductController {
     @Autowired
     private ManageProductService productService;
@@ -21,13 +21,13 @@ public class ProductController {
 
     @GetMapping()
     @ResponseBody
-    public ProductModels getProducts() {
+    public ResponseEntity<ProductListResponse> getProducts() {
         return productService.getProducts();
     }
 
     @GetMapping("/{id}")
     @ResponseBody
-    public ProductModel getProduct(@PathVariable Long id){
+    public ResponseEntity<ProductModel> getProduct(@PathVariable Long id){
 
         return productService.getProduct(id);
     }
@@ -39,8 +39,7 @@ public class ProductController {
 
     @PutMapping("/{id}")
     @ResponseBody
-    public ProductModel replaceEmployee(@RequestBody ProductModel model, @PathVariable Long id) {
-
+    public ResponseEntity<?> updateProduct(@RequestBody ProductModel model, @PathVariable Long id) {
         return productService.updateProduct(model,id);
     }
 }

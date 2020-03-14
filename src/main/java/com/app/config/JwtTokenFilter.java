@@ -1,12 +1,12 @@
 package com.app.config;
 
-import com.app.model.ExceptionModel;
+import com.app.common.CommonKey;
+import com.app.common.exception.TokenException;
 import com.app.service.AuthenticationService;
 import com.app.service.impl.DBUserDetailsServiceImpl;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,10 +19,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.Timestamp;
 
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {
+    private static final Logger log = LogManager.getLogger(JwtTokenFilter.class);
 
     @Autowired
     private AuthenticationService jwtTokenService;
@@ -32,38 +32,25 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String jwtToken  =jwtTokenService.getTokenFromRequest(request);
-        try{
-        if (jwtToken != null && jwtTokenService.validateToken(jwtToken)) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(jwtTokenService.getUsernameFromToken(jwtToken));
-            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                    userDetails, null, userDetails.getAuthorities());
-            usernamePasswordAuthenticationToken
-                    .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            // After setting the Authentication in the context, we specify
-            // that the current user is authenticated. So it passes the
-            // Spring Security Configurations successfully.
-            SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-        }
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            ExceptionModel em = new ExceptionModel();
-            em.setTimestamp(new Timestamp(System.currentTimeMillis()));
-            em.setStatus(HttpStatus.UNAUTHORIZED.value());
-            em.setError(HttpStatus.UNAUTHORIZED.toString());
-            em.setMessage(e.getMessage());
-            em.setPath(request.getPathInfo());
-
-            response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            response.getWriter().write(convertObjectToJson(em));
+        String jwtToken = jwtTokenService.getTokenFromRequest(request);
+        try {
+            if (jwtToken != null && jwtTokenService.validateToken(jwtToken)) {
+                UserDetails userDetails = this.userDetailsService.loadUserByUsername(jwtTokenService.getUsernameFromToken(jwtToken));
+                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
+                usernamePasswordAuthenticationToken
+                        .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                // After setting the Authentication in the context, we specify
+                // that the current user is authenticated. So it passes the
+                // Spring Security Configurations successfully.
+                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+            }
+        } catch (TokenException e) {
+//            e.printStackTrace();
+            log.error((e.getMessage()),e);
+            request.setAttribute(CommonKey.EXCEPTION_MESSAGE,e.getMessage());
         }
         filterChain.doFilter(request, response);
     }
-    public String convertObjectToJson(Object object) throws JsonProcessingException {
-        if (object == null) {
-            return null;
-        }
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.writeValueAsString(object);
-    }
+
 }

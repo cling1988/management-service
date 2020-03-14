@@ -1,15 +1,15 @@
 package com.app.service.impl;
 
-import com.app.config.ProductNotFoundException;
+import com.app.common.exception.ProductNotFoundException;
 import com.app.entity.Product;
 import com.app.model.ProductModel;
-import com.app.model.ProductModels;
+import com.app.model.ProductListResponse;
 import com.app.repository.ProductRepository;
 import com.app.service.ManageProductService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +18,7 @@ import java.util.Optional;
 
 @Service
 public class ManageProductServiceImpl implements ManageProductService {
+    private static final Logger log = LogManager.getLogger(ManageProductServiceImpl.class);
 
     private ModelMapper modelMapper = new ModelMapper();
 
@@ -27,50 +28,53 @@ public class ManageProductServiceImpl implements ManageProductService {
     @Override
     public ResponseEntity<?> createProduct(ProductModel product) {
         Product p = modelMapper.map(product,Product.class);
-        System.out.println(p);
-
-        p = productRepo.save(p);
-
+        productRepo.save(p);
         return ResponseEntity.ok(p.getId());
     }
 
     @Override
-    public ProductModels getProducts() {
-        ProductModels models = new ProductModels();
+    public ResponseEntity<ProductListResponse> getProducts() {
+        ProductListResponse models = new ProductListResponse();
         List<Product> productList = productRepo.findAll();
         for(Product p:productList){
-            models.addProductModel(modelMapper.map(p, ProductModel.class));
+            models.addResults(modelMapper.map(p, ProductModel.class));
         }
 
-        return models;
+        return ResponseEntity.ok(models);
     }
 
     @Override
-    public ProductModel getProduct(Long id) {
+    public ResponseEntity<ProductModel> getProduct(Long id) {
 
         Optional<Product> p = productRepo.findById(id);
         p.orElseThrow(()->new ProductNotFoundException(id));
-
-        return modelMapper.map(p.get(), ProductModel.class);
+        ProductModel pm= modelMapper.map(p.get(), ProductModel.class);
+        return ResponseEntity.ok(pm);
     }
 
     @Override
     public ResponseEntity<?> deleteProduct(Long id) {
-        try {
-            productRepo.deleteById(id);
-        }catch (EmptyResultDataAccessException ex){
-            throw new ProductNotFoundException(id);
-        }
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("");
+            Optional<Product> p =productRepo.findById(id);
+            if(p.isPresent()){
+                Product pp= p.get();
+                pp.setDeleted(true);
+                productRepo.save(pp);
+                return ResponseEntity.noContent().build();
+
+            }else{
+                throw new ProductNotFoundException(id);
+            }
+
     }
 
     @Override
-    public ProductModel updateProduct(ProductModel product, Long id) {
+    public ResponseEntity<?> updateProduct(ProductModel product, Long id) {
 
         Product p = modelMapper.map(product,Product.class);
         p.setId(id);
-        p = productRepo.save(p);
-        return modelMapper.map(p,ProductModel.class);
+        productRepo.save(p);
+//        ProductModel pm= modelMapper.map(p,ProductModel.class);
+        return ResponseEntity.ok(p.getId());
     }
 
 

@@ -1,6 +1,6 @@
 package com.app.repository;
 
-import com.app.entity.LoginUser;
+import com.app.entity.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,7 +10,9 @@ import java.util.Optional;
 
 @Repository
 @Transactional
-public interface LoginUserRepository extends JpaRepository<LoginUser,Long> {
+public interface RoleRepository extends JpaRepository<Role, Long> {
 
-    Optional<LoginUser> findByUsernameAndActive(String username, boolean active);
+    Optional<Role> findByName(String name);
+
+    List<Role> findByLoginUsers_Id(Long id);
 }

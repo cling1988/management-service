@@ -1,4 +1,4 @@
-package com.app.config;
+package com.app.common.exception;
 
 public class ProductNotFoundException extends RuntimeException  {
 

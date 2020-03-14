@@ -1,8 +1,9 @@
 package com.app.model;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class ExceptionModel {
+public class ExceptionModel implements Serializable {
 
     private Timestamp timestamp;
     private Integer status;

@@ -1,7 +1,6 @@
 package com.app.config;
 
-import com.app.config.ProductNotFoundException;
-import io.jsonwebtoken.JwtException;
+import com.app.common.exception.ProductNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,12 +17,12 @@ public class BaseExceptionAdvice {
         return ex.getMessage();
     }
 
-    @ResponseBody
-    @ExceptionHandler(JwtException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public String jwtException(JwtException ex){
-        System.out.println(ex.getMessage());
-        return ex.getMessage();
-    }
+//    @ResponseBody
+//    @ExceptionHandler(TokenException.class)
+//    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+//    public String jwtException(TokenException ex){
+//        System.out.println(ex.getMessage());
+//        return ex.getMessage();
+//    }
 
 }

@@ -1,6 +1,11 @@
 package com.app.config;
 
+import com.app.common.CommonKey;
 import com.app.service.impl.DBUserDetailsServiceImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +15,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,16 +23,17 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+
 import javax.servlet.http.HttpServletResponse;
-import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
 public class BasicAuthConfiguration
         extends WebSecurityConfigurerAdapter {
+    private static final Logger log = LogManager.getLogger(BasicAuthConfiguration.class);
 
-    @Autowired
-    DataSource dataSource;
+//    @Autowired
+//    DataSource dataSource;
 
     @Autowired
     JwtTokenFilter jwtTokenFilter;
@@ -43,12 +48,19 @@ public class BasicAuthConfiguration
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
-                .authorizeRequests().antMatchers("/api/service/auth/**").permitAll()
-                .anyRequest().authenticated().and().
-                exceptionHandling().accessDeniedHandler(accessDeniedHandler()).authenticationEntryPoint(unauthorizedEntryPoint())
-                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.cors();
-        http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+                .authorizeRequests().antMatchers(CommonKey.URL_AUTHORIZATION+"/**").permitAll()
+                .antMatchers(CommonKey.URL_USER +"/**").hasAnyAuthority(CommonKey.PERMISSION_USER)
+                .antMatchers(CommonKey.URL_PRODUCT +"/**").hasAnyAuthority(CommonKey.PERMISSION_PRODUCT)
+                .antMatchers(CommonKey.URL_OUTLET +"/**").hasAnyAuthority(CommonKey.PERMISSION_OUTLET)
+                .antMatchers(CommonKey.URL_PRODUCTION +"/**").hasAnyAuthority(CommonKey.PERMISSION_PRODUCTION)
+                .antMatchers(CommonKey.URL_EVENT +"/**").hasAnyAuthority(CommonKey.PERMISSION_EVENT)
+                .antMatchers(CommonKey.URL_PLANNING +"/**").hasAnyAuthority(CommonKey.PERMISSION_PLANNING)
+                .antMatchers(CommonKey.URL_REPORT +"/**").hasAnyAuthority(CommonKey.PERMISSION_REPORT)
+//                .anyRequest().authenticated()
+                .and().exceptionHandling().accessDeniedHandler(accessDeniedHandler()).authenticationEntryPoint(unauthorizedEntryPoint())
+                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and().cors()
+                .and().addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
     }
 
@@ -69,18 +81,29 @@ public class BasicAuthConfiguration
 
     @Bean
     public AuthenticationEntryPoint unauthorizedEntryPoint() {
-        return (request, response, authException) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                authException.getMessage());
+        return (request, response, authException) ->
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                        (request.getAttribute(CommonKey.EXCEPTION_MESSAGE) != null ?
+                                request.getAttribute(CommonKey.EXCEPTION_MESSAGE).toString() :
+                                authException.getMessage()));
     }
 
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {
-        return (request, response, accessDeniedException) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+        return (request, response, accessDeniedException) -> response.sendError(HttpServletResponse.SC_FORBIDDEN,
                 accessDeniedException.getMessage());
     }
+
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JodaModule());
+        return objectMapper;
     }
 }

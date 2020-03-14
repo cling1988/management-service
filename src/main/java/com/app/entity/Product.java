@@ -10,16 +10,22 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 @Entity
-public class Product {
+public class Product extends Auditable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="product_id_seq")
     @SequenceGenerator(name="product_id_seq", sequenceName="product_id_seq", allocationSize=1)
     private long id;
+
     private String name;
+
+    @Column(length = 100)
     private String code;
+
     private boolean allowOrder;
+
     private boolean sales;
+
     private Integer countPerPack;
 
     @CreationTimestamp
