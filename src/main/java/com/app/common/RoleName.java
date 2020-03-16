@@ -2,7 +2,7 @@ package com.app.common;
 
 public enum RoleName {
     SYSTEM_ADMIN("SYSTEM.ADMIN"),
-    MANAGER("MANAGER");
+    DEFAULT("ADMIN.ALL");
 
     private String value;
 

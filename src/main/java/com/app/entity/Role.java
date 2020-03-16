@@ -14,6 +14,8 @@ public class Role extends Auditable{
     @Column(length = 100)
     private String name;
 
+    private boolean editable =true;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "rolePermissions",
@@ -55,5 +57,13 @@ public class Role extends Auditable{
 
     public void setLoginUsers(Set<LoginUser> loginUsers) {
         this.loginUsers = loginUsers;
+    }
+
+    public boolean isEditable() {
+        return editable;
+    }
+
+    public void setEditable(boolean editable) {
+        this.editable = editable;
     }
 }

@@ -15,7 +15,6 @@ import com.app.service.AuthenticationService;
 import io.jsonwebtoken.Claims;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joda.time.LocalDateTime;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -71,23 +70,23 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return null;
     }
 
-    @Override
-    public ResponseEntity<?> createLoginUser(LoginRequest userModel) {
-        Optional<Role> role = roleRepository.findByName(RoleName.MANAGER.getValue());
-        Set<Role> roles = new HashSet<>();
-        roles.add(role.get());
-
-        LoginUser u = new LoginUser();
-        u.setActive(true);
-        u.setUsername(userModel.getUsername());
-        u.setPassword(bCryptPasswordEncoder.encode(userModel.getPassword()));
-        u.setType(ApplicationType.WEB);
-        u.setRoles(roles);
-
-        loginUserRepository.save(u);
-
-        return ResponseEntity.ok(u.getUsername());
-    }
+//    @Override
+//    public ResponseEntity<?> createLoginUser(LoginRequest userModel) {
+//        Optional<Role> role = roleRepository.findByName(RoleName.DEFAULT.getValue());
+//        Set<Role> roles = new HashSet<>();
+//        roles.add(role.get());
+//
+//        LoginUser u = new LoginUser();
+//        u.setActive(true);
+//        u.setUsername(userModel.getUsername());
+//        u.setPassword(bCryptPasswordEncoder.encode(userModel.getPassword()));
+//        u.setType(ApplicationType.WEB);
+//        u.setRoles(roles);
+//
+//        loginUserRepository.save(u);
+//
+//        return ResponseEntity.ok(u.getUsername());
+//    }
 
     @Override
     public String getTokenFromRequest(HttpServletRequest request) {

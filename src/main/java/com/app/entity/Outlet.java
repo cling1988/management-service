@@ -13,7 +13,15 @@ public class Outlet extends Auditable{
 
     private String name;
 
+    private String code;
+
     private String type;
+
+    private String traffic;
+
+    private String restock;
+
+    private String location;
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "outlets")
     private Set<UserProfile> managers;
@@ -48,5 +56,37 @@ public class Outlet extends Auditable{
 
     public void setManagers(Set<UserProfile> managers) {
         this.managers = managers;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getTraffic() {
+        return traffic;
+    }
+
+    public void setTraffic(String traffic) {
+        this.traffic = traffic;
+    }
+
+    public String getRestock() {
+        return restock;
+    }
+
+    public void setRestock(String restock) {
+        this.restock = restock;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 }

@@ -9,36 +9,32 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(path= CommonKey.URL_PRODUCT)
+@RequestMapping
 public class ProductController {
     @Autowired
     private ManageProductService productService;
 
-    @PostMapping()
+    @PostMapping(CommonKey.URL_PRODUCT_EDIT)
     public ResponseEntity<?> createProduct(@RequestBody ProductModel model) {
         return productService.createProduct(model);
     }
 
-    @GetMapping()
-    @ResponseBody
+    @GetMapping(CommonKey.URL_PRODUCT_VIEW)
     public ResponseEntity<ProductListResponse> getProducts() {
         return productService.getProducts();
     }
 
-    @GetMapping("/{id}")
-    @ResponseBody
+    @GetMapping(CommonKey.URL_PRODUCT_VIEW+"/{id}")
     public ResponseEntity<ProductModel> getProduct(@PathVariable Long id){
-
         return productService.getProduct(id);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(CommonKey.URL_PRODUCT_EDIT+"/{id}")
     public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
         return productService.deleteProduct(id);
     }
 
-    @PutMapping("/{id}")
-    @ResponseBody
+    @PutMapping(CommonKey.URL_PRODUCT_EDIT+"/{id}")
     public ResponseEntity<?> updateProduct(@RequestBody ProductModel model, @PathVariable Long id) {
         return productService.updateProduct(model,id);
     }

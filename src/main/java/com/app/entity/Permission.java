@@ -17,6 +17,15 @@ public class Permission extends Auditable {
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "permissions")
     private Set<Role> roles;
 
+    public Permission(){
+
+    }
+
+    public Permission(Long id, String name){
+        this.id = id;
+        this.name = name;
+    }
+
     public long getId() {
         return id;
     }

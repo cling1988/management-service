@@ -42,21 +42,20 @@ public class AuthenticationController {
             throw new BadCredentialsException("Invalid username/password supplied");
         }
     }
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody LoginRequest user) {
-        LoginRequest userExists = authenticationService.getUserbyUsername(user.getUsername());
-        if (userExists != null) {
-            throw new BadCredentialsException("User with username: " + user.getUsername()+ " already exists");
-        }
-        return authenticationService.createLoginUser(user);
-    }
+//    @PostMapping("/register")
+//    public ResponseEntity<?> register(@RequestBody LoginRequest user) {
+//        LoginRequest userExists = authenticationService.getUserbyUsername(user.getUsername());
+//        if (userExists != null) {
+//            throw new BadCredentialsException("User with username: " + user.getUsername()+ " already exists");
+//        }
+//        return authenticationService.createLoginUser(user);
+//    }
 
     @GetMapping("/init")
     public ResponseEntity<?> initData(){
 
         initialDataService.initData();
 
-
-        return ResponseEntity.ok("");
+        return ResponseEntity.ok().build();
     }
 }

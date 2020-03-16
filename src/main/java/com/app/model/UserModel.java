@@ -10,6 +10,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.List;
 
 public class UserModel implements Serializable {
 
@@ -39,8 +40,11 @@ public class UserModel implements Serializable {
     @JsonFormat(pattern="yyyy-MM-dd")
     private LocalDate birthday;
 
-    @JsonFormat(pattern="yyyy-MM-dd")
-    private LocalDate joinDate;
+    private Long roleId;
+
+    private String roleName;
+
+    private List<PermissionModel> permissions;
 
     public long getId() {
         return id;
@@ -122,14 +126,6 @@ public class UserModel implements Serializable {
         this.birthday = birthday;
     }
 
-    public LocalDate getJoinDate() {
-        return joinDate;
-    }
-
-    public void setJoinDate(LocalDate joinDate) {
-        this.joinDate = joinDate;
-    }
-
     public boolean isActive() {
         return active;
     }
@@ -144,5 +140,29 @@ public class UserModel implements Serializable {
 
     public void setType(ApplicationType type) {
         this.type = type;
+    }
+
+    public Long getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+    public List<PermissionModel> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(List<PermissionModel> permissions) {
+        this.permissions = permissions;
     }
 }

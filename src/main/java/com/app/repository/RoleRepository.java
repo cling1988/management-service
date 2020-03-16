@@ -15,4 +15,6 @@ public interface RoleRepository extends JpaRepository<Role, Long> {
     Optional<Role> findByName(String name);
 
     List<Role> findByLoginUsers_Id(Long id);
+
+    List<Role> findByEditable(boolean editable);
 }

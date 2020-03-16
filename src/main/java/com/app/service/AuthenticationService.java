@@ -18,6 +18,6 @@ public interface AuthenticationService {
 
     public LoginRequest getUserbyUsername(String username);
 
-    public ResponseEntity<?> createLoginUser(LoginRequest userModel);
+//    public ResponseEntity<?> createLoginUser(LoginRequest userModel);
 
 }

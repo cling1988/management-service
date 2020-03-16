@@ -11,6 +11,12 @@ public class OutletModel implements Serializable {
 
     private String type;
 
+    private String traffic;
+
+    private String restock;
+
+    private String location;
+
     private List<UserModel> managers;
 
     public long getId() {
@@ -35,6 +41,30 @@ public class OutletModel implements Serializable {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getTraffic() {
+        return traffic;
+    }
+
+    public void setTraffic(String traffic) {
+        this.traffic = traffic;
+    }
+
+    public String getRestock() {
+        return restock;
+    }
+
+    public void setRestock(String restock) {
+        this.restock = restock;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public List<UserModel> getManagers() {

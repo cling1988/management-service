@@ -26,8 +26,6 @@ public class UserProfile extends Auditable{
     @Column(length = 10)
     private String birthday;
 
-    @Column(length = 10)
-    private String joinDate;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -113,11 +111,4 @@ public class UserProfile extends Auditable{
         this.birthday = birthday;
     }
 
-    public String getJoinDate() {
-        return joinDate;
-    }
-
-    public void setJoinDate(String joinDate) {
-        this.joinDate = joinDate;
-    }
 }

@@ -7,6 +7,7 @@ import com.app.repository.LoginUserRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -26,9 +27,11 @@ public class DBUserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private LoginUserRepository userRepository;
 
+
+
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) throws AuthenticationException {
         Optional<LoginUser> users = userRepository.findByUsernameAndActive(username, true);
 
         if (users.isPresent()) {

@@ -10,39 +10,34 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(path= CommonKey.URL_OUTLET)
+@RequestMapping
 public class OutletController {
 
     @Autowired
     private ManageOutletService service;
 
-    @PostMapping()
+    @PostMapping(CommonKey.URL_OUTLET_EDIT)
     public ResponseEntity<?> createOutlet(@RequestBody OutletModel model) {
         return service.createOutlet(model);
     }
 
-    @GetMapping()
-    @ResponseBody
+    @GetMapping(CommonKey.URL_OUTLET_VIEW)
     public ResponseEntity<OutletListResponse> getOutlets() {
         return service.getOutlets();
     }
 
-    @GetMapping("/{id}")
-    @ResponseBody
+    @GetMapping(CommonKey.URL_OUTLET_VIEW+"/{id}")
     public ResponseEntity<OutletModel> getOutlet(@PathVariable Long id){
-
         return service.getOutlet(id);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(CommonKey.URL_OUTLET_EDIT+"/{id}")
     public ResponseEntity<?> deleteOutlet(@PathVariable Long id) {
         return service.deleteOutlet(id);
     }
 
-    @PutMapping("/{id}")
-    @ResponseBody
+    @PutMapping(CommonKey.URL_OUTLET_EDIT+"/{id}")
     public ResponseEntity<?> updateOutlet(@RequestBody OutletModel model, @PathVariable Long id) {
-
         return service.updateOutlet(model,id);
     }
 }
